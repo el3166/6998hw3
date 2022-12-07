@@ -1,0 +1,287 @@
+AWSTemplateFormatVersion: 2010-09-09
+Metadata:
+  'AWS::CloudFormation::Designer':
+    eb2a23a5-cede-418f-b9e6-ad2eab492695:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 100
+        'y': 100
+      z: 0
+      embeds: []
+    945117fb-9ef5-431d-824a-e98e2b0e052b:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 210
+        'y': 100
+      z: 0
+      embeds: []
+      isassociatedwith:
+        - eb2a23a5-cede-418f-b9e6-ad2eab492695
+    ccb22697-106f-4549-ba52-ea1e0d7e029c:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 100
+        'y': 190
+      z: 0
+      embeds: []
+    6e63495d-2730-46bb-981f-6679f9416791:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 216
+        'y': 187
+      z: 0
+      embeds: []
+      isassociatedwith:
+        - ccb22697-106f-4549-ba52-ea1e0d7e029c
+    bb4ee72c-ee8c-4d98-8c91-52632f3a85cf:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 87.72863626480103
+        'y': 271.51301646232605
+      z: 0
+      embeds: []
+    0f61805e-013d-406a-a13a-70158411d111:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 213.72863626480103
+        'y': 272.51301646232605
+      z: 0
+      embeds: []
+      dependson:
+        - 945117fb-9ef5-431d-824a-e98e2b0e052b
+    7d950678-2c20-43d9-8122-04dffbef04ae:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 80
+        'y': 350
+      z: 0
+      embeds: []
+    3cb2e2ae-af89-4d90-9601-e1eff132162b:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 215.04721091458202
+        'y': 352.23616665462777
+      z: 0
+      embeds: []
+    3763fdf7-0359-48ea-9109-f50f4f2bf2ee:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 80
+        'y': 440
+      z: 0
+      embeds: []
+    e04591a2-207d-4586-8b51-fdbee3abbd31:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 204.94950103759766
+        'y': 434.50685119628906
+      z: 0
+      embeds: []
+    f315ce00-1887-4e9c-9acc-1dc370961239:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 300
+        'y': 430
+      z: 0
+      embeds: []
+Resources:
+  S3BG8L4:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      BucketName: 6998hw3emailscf
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: 's3:ObjectCreated:*'
+            Function: !GetAtt LF1148H.Arn
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: eb2a23a5-cede-418f-b9e6-ad2eab492695
+  S3BP2TLJO:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref S3BG8L4
+      PolicyDocument:
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Sid": "AllowSESPuts",
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Service": "ses.amazonaws.com"
+                    },
+                    "Action": "s3:PutObject",
+                    "Resource": "arn:aws:s3:::6998hw3emailscf/*",
+                    "Condition": {
+                        "StringEquals": {
+                            "aws:Referer": "913901721161"
+                        }
+                    }
+                }
+            ]
+        }
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 945117fb-9ef5-431d-824a-e98e2b0e052b
+  LF1148H:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Architectures:
+        - x86_64
+      Code:
+        S3Bucket: 6998hw3lambda
+        S3Key: SageMakerTest-e84f7af9-6859-45d6-967b-da83e92785e2.zip
+      EphemeralStorage:
+        Size: 512
+      Handler: SageMakerTest-e84f7af9-6859-45d6-967b-da83e92785e2.lambda_function
+      Layers:
+        - 'arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p39-numpy:9'
+      MemorySize: 128
+      Role: !GetAtt IAMR1TCRQ.Arn
+      Runtime: python3.9
+      Timeout: 3
+      TracingConfig:
+        Mode: PassThrough
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: ccb22697-106f-4549-ba52-ea1e0d7e029c
+  LP2WX6:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Ref LF1148H
+      Principal: s3.amazonaws.com
+      SourceAccount: '913901721161'
+      SourceArn: !GetAtt S3BG8L4.Arn
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 6e63495d-2730-46bb-981f-6679f9416791
+  SESRRS54YZH:
+    Type: 'AWS::SES::ReceiptRuleSet'
+    Properties:
+      RuleSetName: emailsCF
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: bb4ee72c-ee8c-4d98-8c91-52632f3a85cf
+  SESRRR7XR:
+    Type: 'AWS::SES::ReceiptRule'
+    Properties:
+      Rule:
+        Actions:
+          - S3Action:
+              BucketName: !Ref S3BG8L4
+        Enabled: true
+        Recipients:
+          - e491061@gmail.com
+          - emily@6998hw3.click
+        ScanEnabled: true
+        TlsPolicy: Optional
+      RuleSetName: emailsCF
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 0f61805e-013d-406a-a13a-70158411d111
+    DependsOn:
+      - S3BP2TLJO
+  IAMR4BYRE:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: sagemaker.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AmazonSageMakerFullAccess'
+        - >-
+          arn:aws:iam::913901721161:policy/service-role/AmazonSageMaker-ExecutionPolicy-20221115T154970
+      MaxSessionDuration: 3600
+      Path: /service-role/
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 7d950678-2c20-43d9-8122-04dffbef04ae
+  IAMR1TCRQ:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AdministratorAccess'
+        - 'arn:aws:iam::aws:policy/AmazonSageMakerFullAccess'
+        - 'arn:aws:iam::aws:policy/AmazonS3FullAccess'
+        - >-
+          arn:aws:iam::913901721161:policy/service-role/AWSLambdaBasicExecutionRole-92d0b25b-7202-419f-9fa7-a04d2102f3f0
+      MaxSessionDuration: 3600
+      Path: /service-role/
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 3cb2e2ae-af89-4d90-9601-e1eff132162b
+  SMM3EF21:
+    Type: 'AWS::SageMaker::Model'
+    Properties:
+      ExecutionRoleArn: !GetAtt IAMR4BYRE.Arn
+      PrimaryContainer:
+        Environment:
+          SAGEMAKER_CONTAINER_LOG_LEVEL: '20'
+          SAGEMAKER_PROGRAM: sms_spam_classifier_mxnet_script.py
+          SAGEMAKER_REGION: us-east-1
+          SAGEMAKER_SUBMIT_DIRECTORY: >-
+            s3://smlambda-workshop-el/sms-spam-classifier/code/sms-spam-classifier-mxnet-2022-11-16-02-34-55-704/source/sourcedir.tar.gz
+        Image: >-
+          520713654638.dkr.ecr.us-east-1.amazonaws.com/sagemaker-mxnet:1.2-cpu-py3
+        ModelDataUrl: >-
+          s3://smlambda-workshop-el/sms-spam-classifier/output/sms-spam-classifier-mxnet-2022-11-16-02-34-55-704/output/model.tar.gz
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 3763fdf7-0359-48ea-9109-f50f4f2bf2ee
+  SMEC3N1EK:
+    Type: 'AWS::SageMaker::EndpointConfig'
+    Properties:
+      ProductionVariants:
+        - InitialInstanceCount: 1
+          InitialVariantWeight: 1
+          InstanceType: ml.m5.large
+          ModelName: !GetAtt SMM3EF21.ModelName
+          VariantName: AllTraffic
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: e04591a2-207d-4586-8b51-fdbee3abbd31
+  SME2UZS5:
+    Type: 'AWS::SageMaker::Endpoint'
+    Properties:
+      EndpointConfigName: !GetAtt SMEC3N1EK.EndpointConfigName
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: f315ce00-1887-4e9c-9acc-1dc370961239
