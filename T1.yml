@@ -281,7 +281,10 @@ Resources:
   SME2UZS5:
     Type: 'AWS::SageMaker::Endpoint'
     Properties:
-      EndpointConfigName: !GetAtt SMEC3N1EK.EndpointConfigName
+      EndpointConfigName: !Ref SageMakerEndpointName
     Metadata:
       'AWS::CloudFormation::Designer':
         id: f315ce00-1887-4e9c-9acc-1dc370961239
+Parameters:
+    SageMakerEndpointName:
+        Type: String
